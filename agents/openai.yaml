@@ -1,0 +1,7 @@
+interface:
+  display_name: "Taiwan Wellness Deck"
+  short_description: "DM-to-deck for Taiwan wellness brands"
+  default_prompt: "Use $tw-wellness-deck to create a Taiwan-market health food or skincare deck from Markdown content and product DM reference images."
+
+policy:
+  allow_implicit_invocation: true
