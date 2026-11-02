@@ -22,7 +22,20 @@ Run this before delivery.
 - Product image appears prominently in cover and relevant selling slides.
 - Motifs are repeated consistently and do not clutter content.
 - No generic template look remains.
-- Product photos, badges, callout cards, and decorative arcs/patterns do not cover title, body, labels, dosage text, CTA chips, or each other.
+- Product photos, badges, callout cards, and decorative arcs/patterns do not cover title, body, labels, dosage text, CTA chips, or each other. A `background` layer is the exception: text may sit on it when the rendered contrast is readable.
+
+## Generated Assets And Layers
+
+Apply this section when the deck uses generated images, packaging, or icons. `references/image-assets.md` has the full checks.
+
+- Every image annotation is in the image plan, with its final prompt and file.
+- All generated images follow the same style lock and contain no unexpected text, logos, or badges.
+- Cutouts passed the alpha check from pixel data and were inspected on light and dark backgrounds.
+- Every product has a packaging status. `final` products use only user files.
+- Each `concept` product has one approved master used throughout, except approved angles, with a blank label and `pack_notice` on every slide showing it.
+- Backgrounds, images, icons, and text are separate objects. No slide is flattened, and only `background` assets fill the slide.
+- Icons are native custom shapes in PPTX or inline SVG in HTML, from one recorded icon set.
+- Generated images do not imply results, endorsement, certification, or absent ingredients, and are not used as evidence.
 
 ## Taiwan Compliance
 
@@ -67,3 +80,4 @@ Tell the user:
 - Deck structure used.
 - Claim-sensitive wording changed or flagged.
 - Any missing assets that would improve the next iteration.
+- Generated assets, their saved location, and any simulated packaging.

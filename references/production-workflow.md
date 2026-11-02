@@ -14,6 +14,7 @@ Rules:
 - Copy readable user assets into the output or scratch `images/` / `assets/` folder before authoring. Run directory creation before copy operations; do not parallelize dependent `mkdir` and `cp`.
 - If an original path is unavailable, search only the current workspace and prior output folders for an existing local copy. Do not silently substitute an unrelated image.
 - Preserve product packshots and logos as concrete assets. Use DM screenshots as style references by default, not slide content.
+- List generated assets, package masters, and icons in the image plan from `references/image-assets.md`, not as user assets. A supplied image of a `concept` product is a reference, not a packshot.
 - Record fallback copies in the final response when an original asset was unavailable.
 
 ## Content Boundary
@@ -29,8 +30,8 @@ When the `presentations:Presentations` workflow is available:
 
 - Use `@oai/artifact-tool` through JavaScript ES modules; do not use `python-pptx`.
 - Set up the artifact-tool workspace before running generated modules.
-- Put generated source and temporary QA files under a scratch `tmp/` folder. Export only the final `.pptx` to `outputs/` unless the user asks otherwise.
-- Keep visible text editable wherever practical. Use native text boxes, shapes, tables, and simple diagrams; use product images only for real raster assets.
+- Put generated source and temporary QA files under a scratch `tmp/` folder. Export only the final `.pptx` to `outputs/` unless the user asks otherwise. When the deck uses generated images, also keep the approved assets and `image-plan.md` in `outputs/<deck name>_assets/`, because later package replacement depends on them.
+- Keep visible text editable wherever practical. Use native text boxes, shapes, tables, and simple diagrams; use image objects only for real product assets and the generated assets in the image plan. Keep the layer order and icon rules in `references/image-assets.md`.
 - Use at least 50 px for cover titles, 35 px for slide titles, 24 px for subheads/callout headings, and 16 px for body/table text unless a supplied template dictates otherwise.
 - Avoid absolute-positioned badges over product photos unless a rendered preview proves they do not cover text, dosage labels, or callout copy.
 
@@ -44,6 +45,7 @@ Minimum PPTX QA:
 4. Generate a clean contact sheet from slide PNGs only; do not include previous montage/contact-sheet files in the contact sheet input folder.
 5. Search the inspect output for forbidden internal-process terms such as `Visual DNA`, `creative brief`, `extraction table`, `設計語言`, and `視覺 DNA`.
 6. Inspect the contact sheet visually for text overlap, clipped text, product-image collisions, inconsistent slide count, and accidental internal-analysis pages.
+7. When the deck has generated assets, packaging, or icons, run the asset and layer checks in `references/image-assets.md`.
 
 ## HTML Production
 

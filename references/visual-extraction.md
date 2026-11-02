@@ -12,7 +12,7 @@ Create a concise table before designing. This table is an internal working note,
 | Typography | display/body/labels | title/body/caption font direction |
 | Layout | grid, density, section rhythm | repeatable slide layouts |
 | Motifs | botanicals, molecules, waves, capsules | background marks, dividers, icons |
-| Imagery | product pack, ingredients, model, lab | hero treatment and image slots |
+| Imagery | product pack, ingredients, model, lab | hero treatment, image slots, and image style lock |
 | Tone | premium, clinical, natural, youthful | copy tone and hierarchy |
 
 ## Palette Heuristics
@@ -84,7 +84,7 @@ Use motifs lightly and consistently:
 
 - Preserve product package proportions.
 - Avoid cropping away brand, dosage, key ingredient, or certification marks.
-- Use cutout product images when available; otherwise frame DM/product photo cleanly.
+- Use cutout product images when available; otherwise frame DM/product photo cleanly. For `concept` packaging, use the approved master from `references/image-assets.md` instead.
 - If screenshot or DM text is low-resolution, recreate the information as editable deck text instead of enlarging blur.
 - Do not fabricate official badges, certifications, clinical logos, or government marks.
 - Do not use a full DM screenshot as a content slide when the user supplied Markdown deck copy. Treat the DM as a style/reference source unless the Markdown asks for a DM audit, before/after comparison, or reference appendix.
