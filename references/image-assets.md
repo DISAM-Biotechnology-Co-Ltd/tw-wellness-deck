@@ -33,12 +33,34 @@ prompt: 新鮮靈芝子實體，微距攝影，柔和側光
 
 Normalize every annotation into the image plan below. If a type or slide is not stated, infer it from the context and record the inference. Ask only when a wrong guess would change what gets generated. Do not add generated images to slides the user did not annotate unless the user asks, or use them to replace supplied real assets.
 
+If the authoritative slide Markdown marks a page `插圖評估：需要` and provides an `插圖 Prompt`, that prompt is a required generated asset. It is not optional merely because native shapes, charts, or an existing product photo can fill the layout. Generate one final visual for every such prompt with the system `image_gen` tool. Do not silently substitute a shape, stock image, or product packshot. If generation is unavailable or the prompt cannot be made compliant, block final delivery and report the exact slide and reason.
+
 ## Image Plan
 
 Before generating anything, write the plan:
 
 | Asset ID | Slide | Type | Source | Layer | User prompt | Final prompt | Status | File |
 |---|---|---|---|---|---|---|---|---|
+
+Create a machine-readable `image-plan.json` beside this table. Give every required prompt one record and retain the original prompt verbatim in `source_prompt`:
+
+```json
+{
+  "required_assets": [
+    {
+      "id": "p04-lifestyle",
+      "source_page": 4,
+      "source_prompt": "Exact text copied from the slide Markdown",
+      "generation_prompt": "Exact prompt sent to image_gen",
+      "generation_tool": "image_gen",
+      "asset_paths": ["p04-lifestyle.png"],
+      "pptx_slide": 4
+    }
+  ]
+}
+```
+
+Each asset path is relative to the JSON manifest. `pptx_slide` is one-based and includes the cover. If there is more than one generated file for a prompt, list every file in `asset_paths`.
 
 - `Type`: `background`, `cutout`, `package`, `icon`, `photo`, or `logo`.
 - `Source`: `generated`, `user-provided`, or `icon-library`.
@@ -69,6 +91,8 @@ Apply it to every generated image.
 Use the system `imagegen` skill and its built-in `image_gen` tool. Do not use the CLI fallback or change models unless the user confirms it.
 
 Do not spend generations until the plan and compliance screen are done. Tell the user how many images will be generated when the count is large, because image generation uses plan limits faster than ordinary work.
+
+For each required prompt, call the system `image_gen` tool and save its output as a separate asset. A plan entry alone does not count as generation. Run one representative pilot, inspect it, and then generate the remaining required prompts. Keep the exact source prompt and the prompt actually sent to the tool as separate manifest fields.
 
 ### Backgrounds
 
@@ -195,5 +219,14 @@ Check the finished PPTX with the inspect output or the package XML:
 - Each icon is a native custom shape (`a:custGeom`), not a picture.
 - Each product uses one master file, apart from approved angles, and `final` products use no generated package.
 - Every slide showing a concept package has `pack_notice`.
+
+Before finalizing a PPTX, run the deterministic required-image gate against the authoritative Markdown, `image-plan.json`, and candidate PPTX:
+
+```bash
+python3 "<skill folder>/scripts/check_required_image_assets.py" \
+  "<source slide Markdown>" "<asset folder>/image-plan.json" "<candidate PPTX>"
+```
+
+The gate fails if a source page marked `需要` lacks its prompt, manifest row, `image_gen` entry, file, or image placement. It also verifies that each asset's exact bytes are embedded on the declared slide. A failing gate blocks finalization; never remove a source requirement or alter its prompt just to pass the check.
 
 Report any check that could not run. Do not report it as passed.

@@ -113,9 +113,26 @@ When the Markdown already contains explicit slide headings, map each heading to 
 
 ### 6. Image Assets
 
+#### Mandatory image-generation gate for annotated decks
+
+When the authoritative slide Markdown contains a slide marked `插圖評估：需要` with an associated `插圖 Prompt`, treat that prompt as a required generated visual. This is a production requirement, not an optional suggestion. Native charts, text, shapes, product packshots, stock images, or a note saying “no generated images” do not satisfy it.
+
+Before building slides:
+
+1. Count every required slide prompt and add one entry per required source page to `image-plan.json`. Preserve the source prompt verbatim as `source_prompt`; put DM style-lock additions in a separate `generation_prompt` field.
+2. Screen every prompt against compliance and packaging rules. For a final package, generate a product-free scene or background and layer the user's untouched package photo separately. Never ask the model to create, repair, or redraw final package artwork.
+3. Run one representative image-and-slide pilot and inspect it. Then call the system `image_gen` tool for every remaining required prompt. Record `generation_tool: "image_gen"`, each saved asset path, and the PPTX slide where it is used.
+4. Keep a one-to-one mapping between required source prompts and manifest entries. If one prompt requires multiple generated files, list every file under that entry's `asset_paths` array.
+
+Do not silently replace an annotated generated visual with editable shapes, a stock image, or an existing product photo. If image generation is unavailable or a prompt cannot be made compliant, stop before final export and report the exact slide and blocker. Ask the user only for a decision needed to resolve that blocker.
+
+Slides marked `插圖評估：不需要` remain eligible for native, editable charts and diagrams and do not trigger image generation.
+
+For PPTX delivery, validate the candidate deck before finalization with `scripts/check_required_image_assets.py`. Every required page must have a matching manifest entry, a generated asset file, and that exact image embedded on the mapped slide. Any missing item blocks finalization. Report required, generated, and embedded counts in private QA notes; do not call the deck complete while the counts differ.
+
 When the deck uses generated images, packaging, or icons, follow `references/image-assets.md`:
 
-- Write the image plan from the annotations and the chosen layouts, so each image is generated for its placement.
+- Parse every `插圖評估：需要` / `插圖 Prompt` pair in the authoritative slide Markdown and treat each pair as mandatory. Populate `image-plan.json` and `image-plan.md`; never omit a required entry because a native diagram seems sufficient.
 - For `concept` packaging, stop for the user to approve one package master before building slides that show it. Reuse that one file throughout the deck.
 - Build and check one pilot slide before generating the full set, unless the user says to skip it.
 - Generate through the system `imagegen` skill, verify each result, and copy approved files into the deck's asset folder.
@@ -175,6 +192,7 @@ Minimum checks:
 - Chinese text is readable on projection.
 - Product images, callout cards, badges, and decorative motifs do not overlap or obscure text at common desktop and mobile viewports. A `background` layer may sit behind text when the rendered contrast is readable.
 - Slides are layered: no flattened slide images, all text is native, and icons are vector.
+- Required image-generation audit passed: every source slide marked `插圖評估：需要` has its source prompt, `image_gen` asset, existing file, and embedded slide placement recorded in the manifest and checked by the validator. A missing asset is a release blocker.
 - Packaging matches its status: `final` uses only user files; `concept` uses one approved master throughout, with the visible notice on each slide.
 - Layout does not feel like a generic template.
 - PPTX/HTML file opens successfully.
